@@ -1,3 +1,26 @@
+--para ejecutar el script
+--@C:\SQL\tema5.sql
+
+--Conexion al sistema
+CONNECT SYSTEM/admin;
+
+--Si existe el usuario, eliminar
+DROP USER matias CASCADE;
+
+--Creacion del usuario
+CREATE USER matias IDENTIFIED BY admin DEFAULT TABLESPACE users TEMPORARY TABLESPACE temp QUOTA UNLIMITED ON users;
+
+--Asignacion de permisos
+GRANT CREATE SESSION, CREATE TABLE, CREATE SEQUENCE, CREATE ANY INDEX, CREATE VIEW, CREATE TRIGGER TO matias;
+
+--desconectar usuario SYSTEM
+DISCONNECT;
+
+--Iniciar sesion usuario
+CONNECT matias/admin;
+
+--formato fecha
+alter session set nls_date_format='dd-mm-yyyy';
 --Tabla alumno
 CREATE TABLE ALUMNO(
        CODIGO INTEGER,
