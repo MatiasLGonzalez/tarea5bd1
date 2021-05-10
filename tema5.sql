@@ -143,12 +143,13 @@ ADD (
 ALTER TABLE CARRERA
 MODIFY (
        ES_ACREDITADA DEFAULT 'N'
-)
+);
 
 -- f) Al insertar registros en la tabla matriculación, la columna ‘fecha_matric’ debe asumir por defecto la fecha del sistema.
 CREATE OR REPLACE TRIGGER MATRIC_FECHA_MATRIC_TRIG
 BEFORE INSERT ON MATRICULACION
 FOR EACH ROW
+BEGIN
     :NEW.FECHA_MATRIC := SYSDATE;
 END;
 /
