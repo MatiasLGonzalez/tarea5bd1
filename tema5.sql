@@ -39,7 +39,7 @@ CREATE TABLE ALUMNO(
 );
 
 --secuencia para CODIGO de la tabla ALUMNO
-CREATE SEQUENCE ALUMNO_CODIGO_SEQ
+CREATE SEQUENCE SEQ_ALUMNO
        START WITH 1
        INCREMENT BY 1;
 
@@ -53,12 +53,11 @@ CREATE TABLE CARRERA(
        ES_ACREDITADA CHAR(1) NOT NULL,
        ESTADO CHAR(1) NOT NULL,
        CONSTRAINT CARRERA_PK PRIMARY KEY(CODIGO),
-       CONSTRAINT CARRERA_ES_ACREDITADA CHECK(ES_ACREDITADA IN('S', 'N')),
        CONSTRAINT CARRERA_ESTADO CHECK(ESTADO IN('A', 'C'))
 );
 
 --secuencia para CODIGO de la tabla CARRERA
-CREATE SEQUENCE CARRERA_CODIGO_SEQ
+CREATE SEQUENCE SEQ_CARRERA
        START WITH 1
        INCREMENT BY 1;
 
@@ -83,7 +82,7 @@ CREATE TABLE MATERIA(
 );
 
 --secuencia para CODIGO de la tabla MATERIA
-CREATE SEQUENCE MATERIA_CODIGO_SEQ
+CREATE SEQUENCE SEQ_MATERIA
        START WITH 1
        INCREMENT BY 1;
 
@@ -113,3 +112,47 @@ CREATE TABLE MATRICULACION(
        CONSTRAINT MATRICULACION_NUM_SEMESTRE CHECK(NUM_SEMESTRE BETWEEN 1 AND 2),
        CONSTRAINT MATRICULACION_SITUACION CHECK(SITUACION IN('C', 'X', 'A'))
 );
+
+------------------------------------------1.2-----------------------------------
+-- a) El campo CI de la tabla alumno debe ser único, no debe admitir duplicaciones.
+ALTER TABLE ALUMNO
+ADD UNIQUE (CI);
+
+-- b)Tabla Matriculación: Agregue el campo calificación cuyo tipo de dato es Int,
+-- no debe admitir valores nulos y asumir por defecto el valor 0.
+ALTER TABLE MATRICULACION
+ADD (
+    CALIFICACION INTEGER NOT NULL DEFAULT 0
+    );
+
+-- c) Tabla Carrera_Materia, la columna costo debe ser mayor a cero.
+ALTER TABLE CARRERA_MATERIA
+ADD CONSTRAINT CARRERA_MATERIA_COSTO CHECK(COSTO > 0);
+
+-- d) Ampliar la capacidad del campo dirección de la tabla alumno a 200 caracteres.
+ALTER TABLE ALUMNO
+MODIFY DIRECCION VARCHAR(200);
+
+-- e) El campo 'Es_acreditada' de la tabla Carrera sólo puede tomar los valores S o N
+ALTER TABLE CARRERA
+ADD (
+    CONSTRAINT CARRERA_ES_ACREDITADA CHECK(ES_ACREDITADA IN('S', 'N'))
+    );
+
+-- y debe asumir por defecto N.
+ALTER TABLE CARRERA
+MODIFY (
+       ES_ACREDITADA DEFAULT 'N'
+)
+
+-- f) Al insertar registros en la tabla matriculación, la columna ‘fecha_matric’ debe asumir por defecto la fecha del sistema.
+CREATE OR REPLACE TRIGGER MATRICULACION_FECHA_MATRIC_TRIG
+BEFORE INSERT ON MATRICULACION
+FOR EACH ROW
+    :OLD.FECHA_MATRIC := SYSDATE;
+END MATRICULACION_FECHA_MATRIC_TRIG;
+/
+
+-- g) El campo calificación de la tabla matriculación sólo puede tomar valores que estén entre 0 y 5.
+ALTER TABLE MATRICULACION
+ADD CONSTRAINT MATRICULACION_CALIFICACION CHECK(CALIFICACION BETWEEN 0 AND 5);
