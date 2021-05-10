@@ -122,7 +122,7 @@ ADD UNIQUE (CI);
 -- no debe admitir valores nulos y asumir por defecto el valor 0.
 ALTER TABLE MATRICULACION
 ADD (
-    CALIFICACION INTEGER NOT NULL DEFAULT 0
+    CALIFICACION INTEGER DEFAULT 0 NOT NULL
     );
 
 -- c) Tabla Carrera_Materia, la columna costo debe ser mayor a cero.
@@ -146,11 +146,11 @@ MODIFY (
 )
 
 -- f) Al insertar registros en la tabla matriculación, la columna ‘fecha_matric’ debe asumir por defecto la fecha del sistema.
-CREATE OR REPLACE TRIGGER MATRICULACION_FECHA_MATRIC_TRIG
+CREATE OR REPLACE TRIGGER MATRIC_FECHA_MATRIC_TRIG
 BEFORE INSERT ON MATRICULACION
 FOR EACH ROW
-    :OLD.FECHA_MATRIC := SYSDATE;
-END MATRICULACION_FECHA_MATRIC_TRIG;
+    :NEW.FECHA_MATRIC := SYSDATE;
+END;
 /
 
 -- g) El campo calificación de la tabla matriculación sólo puede tomar valores que estén entre 0 y 5.
